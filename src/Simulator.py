@@ -1,4 +1,4 @@
-#Some code taken From CMU 15-112 Fall 2015 course 
+#Some code taken From CMU 15-112 Fall 2015 course
 ### Website: http://www.cs.cmu.edu/~112/index.html
 from Animation import Animation # Edited from CMU 15-112 Fall 2015
 from SustainableBuilder import * #Import All classes that game uses.
@@ -13,15 +13,15 @@ class Simulator(Animation):
         self.visitedModes = []
         self.second = 1000//self.timerFiredDelay
         self.groundY = 3*self.height//4
-        self.gameOver = False 
-        self.panelImage = self.importImage('SolarCell.gif')
-        self.artImages = [self.importImage('FlowerPainting.gif'), 
-                            self.importImage('PeaceIcon.gif')]
-        self.rainIcon = self.importImage('Raincloud.gif')
-        self.sunIcon = self.importImage('SunIcon.gif')
-        self.fruitImages = {'apple': self.importImage('AppleIcon.gif')}
-        self.playerImages = [self.importImage('PlayerLookRight.gif'), 
-                                self.importImage('PlayerLookLeft.gif')]
+        self.gameOver = False
+        self.panelImage = self.importImage('../GifAssets/SolarCell.gif')
+        self.artImages = [self.importImage('../GifAssets/FlowerPainting.gif'),
+                            self.importImage('../GifAssets/PeaceIcon.gif')]
+        self.rainIcon = self.importImage('../GifAssets/Raincloud.gif')
+        self.sunIcon = self.importImage('../GifAssets/SunIcon.gif')
+        self.fruitImages = {'apple': self.importImage('../GifAssets/AppleIcon.gif')}
+        self.playerImages = [self.importImage('../GifAssets/PlayerLookRight.gif'),
+                                self.importImage('../GifAssets/PlayerLookLeft.gif')]
         self.player = Player(self) # actions, attributes
         self.world = World(self.player) # contains objects and attributes
         self.openWorldInit()
@@ -29,16 +29,16 @@ class Simulator(Animation):
 
     def mousePressed(self, event):
         if self.mode == 'splashScreen': self.splashScreenMousePressed(event)
-        elif self.mode == 'openWorld': self.openWorldMousePressed(event)        
+        elif self.mode == 'openWorld': self.openWorldMousePressed(event)
         elif self.mode == 'craft': self.craftMousePressed(event)
         elif self.mode == 'playerHouse': self.houseMousePressed(event)
         elif self.mode ==  'computer': self.computerMousePressed(event)
         elif self.mode == 'browser': self.browserMousePressed(event)
 
 
-    def keyPressed(self, event): 
+    def keyPressed(self, event):
         if self.mode == 'splashScreen': self.splashScreenKeyPressed(event)
-        elif self.mode == 'openWorld': self.openWorldKeyPressed(event)        
+        elif self.mode == 'openWorld': self.openWorldKeyPressed(event)
         elif self.mode == 'craft': self.craftKeyPressed(event)
         elif self.mode == 'playerHouse': self.houseKeyPressed(event)
         elif self.mode ==  'computer': self.computerKeyPressed(event)
@@ -46,7 +46,7 @@ class Simulator(Animation):
 
     def timerFired(self):
         if self.mode == 'splashScreen': self.splashScreenTimerFired()
-        elif self.mode == 'openWorld': self.openWorldTimerFired()        
+        elif self.mode == 'openWorld': self.openWorldTimerFired()
         elif self.mode == 'craft': self.craftTimerFired()# stopTime
         elif self.mode == 'playerHouse': self.openWorldTimerFired()
         elif self.mode ==  'computer': self.computerTimerFired() # losePower
@@ -54,7 +54,7 @@ class Simulator(Animation):
 
     def redrawAll(self):
         if self.mode == 'splashScreen': self.splashScreenRedrawAll()
-        elif self.mode == 'openWorld': self.openWorldRedrawAll()        
+        elif self.mode == 'openWorld': self.openWorldRedrawAll()
         elif self.mode == 'craft': self.craftRedrawAll()
         elif self.mode == 'playerHouse': self.houseRedrawAll()
         elif self.mode ==  'computer': self.computerRedrawAll()
@@ -82,12 +82,12 @@ class Simulator(Animation):
         if event.keysym == '1':
             self.switchMode('openWorld')
 
-    def splashScreenTimerFired(self): 
+    def splashScreenTimerFired(self):
         if self.gameOver:
             self.init()
 
     def drawTitle(self):
-        self.canvas.create_text(self.width//2, self.height//4, 
+        self.canvas.create_text(self.width//2, self.height//4,
         text = 'Sustainable Builder', font = 'Helvetica 32 bold',
         fill = 'darkgreen')
 
@@ -96,7 +96,7 @@ class Simulator(Animation):
     def drawInstructions(self):
         yOffset = self.height//8
         xPlace = self.width//2
-        self.canvas.create_text(xPlace,yOffset*3, 
+        self.canvas.create_text(xPlace,yOffset*3,
             text = 'press 1 for QuickStart game ')
 
     def splashScreenRedrawAll(self):
@@ -105,18 +105,18 @@ class Simulator(Animation):
         self.drawInstructions()
 
 ################
-#Craft
+#Craft TODO Implement craft Screen
 ################
     def drawResources(self):
         self.player.drawInventory(self)
-        j = 0 
+        j = 0
         for i,resource in enumerate(self.player.resources):
             i %= 4 # columns of 4
             if i % 4 == 0:
-                j += 1 # when a col is full start new row 
+                j += 1 # when a col is full start new row
             i += 1 # from 1 to 4 inclusive
             (wX0, wY0, wX1, wY1) = self.player.invCoords
-            xOffset = (wX1 - wX0)//6 
+            xOffset = (wX1 - wX0)//6
             yOffset = (wY1 - wY0)//4
             image = self.importImage(resource.iconPath)
             resource.drawInInv(wX0 + i*xOffset, wY0 + j*yOffset, xOffset,
@@ -148,7 +148,7 @@ class Simulator(Animation):
 
     def updateSteps(self, d):
         gs = self.genStep
-        if d > 0: 
+        if d > 0:
             self.rightNewStepCount += 1
             if self.rightNewStepCount % gs == 0: self.generateMoreWorld()
         else:
@@ -167,16 +167,16 @@ class Simulator(Animation):
         if event.keysym == 'Escape':
             self.switchMode('splashScreen')
 
-        elif self.gameOver: return 
+        elif self.gameOver: return
 
         elif event.keysym == 'Left':
             self.player.walk(-1)
-            if self.player.updateVisitedTerrain(): 
+            if self.player.updateVisitedTerrain():
                 self.updateSteps(-1)
 
         elif event.keysym == 'Right':
             self.player.walk(1)
-            if self.player.updateVisitedTerrain(): 
+            if self.player.updateVisitedTerrain():
                 self.updateSteps(1)
 
         elif event.keysym == 'e':
@@ -211,19 +211,14 @@ class Simulator(Animation):
             self.player.pickFruit(self.world.trees)
 
 
-        #if event.keysym == 'c':
-            #if self.player.toolHeld.canChop():
-                #self.player.chop(self.world.getTrees())
-
-
     def openWorldTimerFired(self):
-        if not self.player.alive: 
+        if not self.player.alive:
             self.gameOver = True
-            return 
+            return
         self.timerCount += 1
         #update daylightOffset for all Drawn Classes
-        Drawn.updateDaylightOffset(self.world.adjustWorldColor()) 
-        if self.timerCount % self.second == 0: 
+        Drawn.updateDaylightOffset(self.world.adjustWorldColor())
+        if self.timerCount % self.second == 0:
             seconds = self.world.tick()
             #Player gets hungry  and thirsty over time
             if seconds % (self.world.dayLength//6) == 0: # 6 times a day
@@ -231,12 +226,12 @@ class Simulator(Animation):
                 if seconds % (self.world.dayLength//3) == 0: # 3 times a day
                     self.player.hunger()
         if self.world.raining:
-            self.world.moveRain() #move rain cloud 
+            self.world.moveRain() #move rain cloud
 
     def drawGameOver(self):
         self.canvas.create_text(self.width//2, self.height//2, anchor= 's',
                         text = 'Game Over', font = 'Helvetica 40', fill = 'red')
-        self.canvas.create_text(self.width//2, self.height//2, 
+        self.canvas.create_text(self.width//2, self.height//2,
                         font = 'Helvetica 25', fill = 'darkred',
                         text = 'press the escape key to go to start screen')
     def openWorldRedrawAll(self):
@@ -249,14 +244,14 @@ class Simulator(Animation):
 
     def drawInv(self):
         self.player.drawInventory(self)
-        j = 0 
+        j = 0
         for i,resource in enumerate(self.player.resources):
             i %= 4 # columns of 4
             if i % 4 == 0:
-                j += 1 # when a col is full start new row 
+                j += 1 # when a col is full start new row
             i += 1 # from 1 to 4 inclusive
             (wX0, wY0, wX1, wY1) = self.player.invCoords
-            xOffset = (wX1 - wX0)//6 
+            xOffset = (wX1 - wX0)//6
             yOffset = (wY1 - wY0)//4
             image = self.importImage(resource.iconPath)
             resource.drawInInv(wX0 + i*xOffset, wY0 + j*yOffset, xOffset,
@@ -266,7 +261,7 @@ class Simulator(Animation):
 #inHouse
 ################
 
-    def houseMousePressed(self, event): pass 
+    def houseMousePressed(self, event): pass
 
     def houseKeyPressed(self, event):
         if event.keysym == 'Escape':
@@ -321,16 +316,16 @@ class Simulator(Animation):
                 for resource in self.player.resources:
                     if resource.moreButton.isClicked(event.x, event.y):
                         resource.selling += 5
-                    elif (resource.lessButton.isClicked(event.x, event.y) 
+                    elif (resource.lessButton.isClicked(event.x, event.y)
                                                     and resource.selling > 0):
                         resource.selling -= 5
                 for merch in computer.browserIcon.buyMerch:
                     if merch.moreButton.isClicked(event.x, event.y):
                         merch.buying += 1
-                    elif (merch.lessButton.isClicked(event.x, event.y) 
+                    elif (merch.lessButton.isClicked(event.x, event.y)
                                     and merch.buying > 0):
                         merch.buying -= 1
- 
+
                 for button in computer.browserIcon.buttons:
                    if button.isClicked(event.x, event.y):
                         if button.txt == 'Sell':
@@ -364,7 +359,7 @@ class Simulator(Animation):
 
     def drawSell(self, app):
         money = self.player.myMoney
-        money.drawInInv(3*self.width//4, self.height//10, self.width//8, 
+        money.drawInInv(3*self.width//4, self.height//10, self.width//8,
                         self.height//8, self.importImage(money.iconPath))
         for i,resource in enumerate(app.sellMerch):
             if i == 3: return # don't draw money
@@ -375,7 +370,7 @@ class Simulator(Animation):
             height = wHeight//8
             yOffset = wWidth//8
             image = self.importImage(resource.iconPath)
-            resource.drawInMerchScreen(xStart, wY0 + (i+1)*yOffset, width, 
+            resource.drawInMerchScreen(xStart, wY0 + (i+1)*yOffset, width,
                                             height, image)
 
     def drawBuy(self, app):
@@ -387,7 +382,7 @@ class Simulator(Animation):
             height = wHeight//8
             yOffset = wWidth//6
             image = self.importImage(merch.iconPath)
-            merch.drawInMerchScreen(xStart, wY0 + yOffset, width, height, 
+            merch.drawInMerchScreen(xStart, wY0 + yOffset, width, height,
                                         image)
 
 
@@ -402,7 +397,7 @@ class Simulator(Animation):
             for app in self.appsOpen:
                 if app.name == 'inventory':
                     self.drawInv()
-                else: 
+                else:
                     app.drawIn(self) # app is browser
                     self.drawSell(app)
                     self.drawBuy(app)

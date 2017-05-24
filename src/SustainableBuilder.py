@@ -1,7 +1,7 @@
 #Emilio Vargas-Vite
 #evargasv, Section I, 15-112
-# Fall 2015 Term Project 
-### Some code taken From CMU 15-112 Fall 2015 course 
+# Fall 2015 Term Project
+### Some code taken From CMU 15-112 Fall 2015 course
 ### Website: http://www.cs.cmu.edu/~112/index.html
 ### Took: Animation Class, rgbString Method, scroll Implementation
 ## I do not own any of the images used in this program
@@ -13,7 +13,7 @@ from math import sin, pi
 
 class Drawn(object):
     # light offset passes the time to all Drawn children to represent day time
-    daylightOffset = 1 
+    daylightOffset = 1
     #game = none # init in player
 
     @staticmethod  #from CMU 15-112
@@ -27,7 +27,7 @@ class Drawn(object):
         minDayLight = 0.15 # set minimum rgb product
         __class__.daylightOffset = max(colorOffset, minDayLight)
 
-class GameAttribute(Drawn): 
+class GameAttribute(Drawn):
 
     def __init__(self, owner, value, cap = None , name = None, kind = None):
         self.kind = kind
@@ -65,33 +65,33 @@ class GameAttribute(Drawn):
     def gain(self, gain):
         if self.cap == None or self.value < self.cap:
             self.value += gain
-        else: 
+        else:
             self.value = self.cap
 
     def getValue(self):
         return self.value
- 
+
 class MyButton(Drawn):
-        def __init__(self, x0 , y0, width, height, text = None, color = None, 
+        def __init__(self, x0 , y0, width, height, text = None, color = None,
                             font = None):
             self.x0 = x0
             self.y0 = y0
-            self.width = width 
+            self.width = width
             self.height = height
             self.x1 = self.x0 + width
             self.y1 =self.y0 + height
-            self.txt = text 
+            self.txt = text
             self.font = font
             self.color = color
 
-        def draw(self, game): 
-            game.canvas.create_rectangle(self.x0, self.y0, self.x1, self.y1, 
+        def draw(self, game):
+            game.canvas.create_rectangle(self.x0, self.y0, self.x1, self.y1,
                 fill = self.color)
-            game.canvas.create_text(self.x0 + self.width/2, 
-                            self.y0 + self.height/2, 
+            game.canvas.create_text(self.x0 + self.width/2,
+                            self.y0 + self.height/2,
                             text = self.txt, font = self.font)
 
-        def isClicked(self, x, y): 
+        def isClicked(self, x, y):
             if x>=self.x0 and x<=self.x1 and y<=self.y1 and y>= self.y0:
                 return True
             return False
@@ -103,14 +103,14 @@ class MyButton(Drawn):
 class Player(Drawn):
     '''Creates player with all actions and attributes'''
 
-    def __init__(self, game): 
+    def __init__(self, game):
         self.game = game
         self.lookRightIcon = game.playerImages[0]
         self.lookLeftIcon = game.playerImages[1]
         self.dir = 'right'
         self.walking = False
         self.screenInsteps = 30# 30 steps to move accross screen
-        self.step = game.width//self.screenInsteps 
+        self.step = game.width//self.screenInsteps
         self.displayInv = False
         self.wieldables = []
         self.specialItems = []
@@ -118,7 +118,7 @@ class Player(Drawn):
         self.wielding = None
 
         #Define position and dimensions
-        self.xPos = self.step * 10 # arbitrary 
+        self.xPos = self.step * 10 # arbitrary
         self.yPos = self.game.groundY
         self.width  = self.lookRightIcon.width()
         self.height = self.lookRightIcon.height()
@@ -131,21 +131,21 @@ class Player(Drawn):
         self.alive = True
         self.stats = []
         # does not kill player
-        self.power = GameAttribute(self, 100, 100, 'Powerstat', kind = 'power') 
+        self.power = GameAttribute(self, 100, 100, 'Powerstat', kind = 'power')
         #essential
         self.food = GameAttribute(self, 20, 20, 'Foodstat', kind = 'food')
-        #essential 
+        #essential
         self.water = GameAttribute(self, 30, 30, 'Waterstat', kind = 'water')
         #Initialize player Resources
         self.resources = []
         self.myWater = playerResource(self, self.water.value*3, name ='myWater',
-                                kind = 'water',  iconPath = 'WaterIcon.gif') 
+                                kind = 'water',  iconPath = '../GifAssets/WaterIcon.gif')
         self.myFood = playerResource(self, self.food.value*3, name ='myFood',
-                                    kind = 'food',iconPath = 'FoodIcon.gif') 
+                                    kind = 'food',iconPath = '../GifAssets/FoodIcon.gif')
         self.myWood = playerResource(self, 40, name ='myWood', kind = 'wood',
-                                        iconPath = 'WoodIcon.gif') 
+                                        iconPath = '../GifAssets/WoodIcon.gif')
         self.myMoney = playerResource(self, 100, name = 'myMoney',
-                                    kind ='money',iconPath = 'MoneyIcon.gif') 
+                                    kind ='money',iconPath = '../GifAssets/MoneyIcon.gif')
         self.mySeeds = None #Seeds()
         self.myLeaves = None #Leaves
 
@@ -196,13 +196,13 @@ class Player(Drawn):
         print(self.wieldables, 'after')
         print(self.wielding, 'wielding')
 
-    
+
     def chop(self, trees):
-        '''Optimization for onScreen only trees is not great, 
+        '''Optimization for onScreen only trees is not great,
     because I would still need to loop over the entire treelist,
-    make a smaller list, and then loop through that one again. 
+    make a smaller list, and then loop through that one again.
     It's better to just loop through the tree list and compare xCoordinates'''
-        for tree in trees: 
+        for tree in trees:
             if tree.x1 >= self.xPos and tree.x0 <= self.xPos:
                 tree.chopped()
                 if tree.integrity <= 0:
@@ -215,9 +215,9 @@ class Player(Drawn):
 
     def pickFruit(self, trees):
         for tree in trees:
-            if (isinstance(tree, FruitTrees) and tree.x1 >= self.xPos 
+            if (isinstance(tree, FruitTrees) and tree.x1 >= self.xPos
                     and tree.x0 <= self.xPos):
-                value = tree.picked() 
+                value = tree.picked()
                 self.myFood.gain(value)
 
     def hunger(self):
@@ -226,7 +226,7 @@ class Player(Drawn):
             self.alive = False
 
     def thirst(self):
-        empty = self.water.lose(1) 
+        empty = self.water.lose(1)
         if empty: #empty
             self.alive = False
 
@@ -250,37 +250,37 @@ class Player(Drawn):
     def drawStat(self, game, stat, i):
         barWidth = game.width//4
         barHeight = game.height//20
-        x0 = 5 
+        x0 = 5
         y0 = 10
         yOffset = x0 + barHeight * i # brings next stat lower
         # Draw Encasing box
         barOutline = (x0,yOffset, x0 + barWidth, yOffset + barHeight)
-        game.canvas.create_rectangle(*barOutline, width = 2) 
+        game.canvas.create_rectangle(*barOutline, width = 2)
         # Draw Colored bar to indicate actual value
-        colors = ['yellow', 'orange', 'blue'] 
+        colors = ['yellow', 'orange', 'blue']
         statStatus = stat.getValue()/stat.cap
         statBar = (x0, yOffset, x0 + barWidth * statStatus, yOffset + barHeight)
         game.canvas.create_rectangle(*statBar, fill = colors[i], width = 0)
         # Draw Text To indicate what stat is
-        game.canvas.create_text(x0, yOffset, text = str(stat).strip('stat'), 
+        game.canvas.create_text(x0, yOffset, text = str(stat).strip('stat'),
                                     anchor = 'nw')
 
     def drawPlayer(self, game):
         if self.dir == 'right':
-            self.curImage = self.lookRightIcon 
+            self.curImage = self.lookRightIcon
         else: self.curImage = self.lookLeftIcon
-        game.canvas.create_image(self.curX, self.yPos, 
+        game.canvas.create_image(self.curX, self.yPos,
                                     anchor = 'se',  image = self.curImage)
     def toggleInv(self):
         self.displayInv = not self.displayInv
 
     def drawInventory(self, game):
         (xMargin, yMargin) = (game.width//8, game.height//8)
-        self.invCoords = (xMargin, yMargin, game.width - xMargin, 
+        self.invCoords = (xMargin, yMargin, game.width - xMargin,
                                                     game.height - yMargin)
         game.canvas.create_rectangle(*self.invCoords, fill = 'grey')
-        
-        #yiconOffset = 
+
+        #yiconOffset =
         #for i,resource in enumerate(self.resources):
 
             #resource.drawInInv()
@@ -296,7 +296,7 @@ class Player(Drawn):
 
 class playerResource(GameAttribute):
     PRICES = {'water': 4, 'food': 5, 'wood': 3, 'money':0}
-    def __init__(self, owner, value, cap = None , name = None, kind = None, 
+    def __init__(self, owner, value, cap = None , name = None, kind = None,
                     iconPath = None):
         super().__init__(owner,value, cap, name, kind)
         self.game = self.owner.game
@@ -311,7 +311,7 @@ class playerResource(GameAttribute):
         canvas.create_rectangle(x0, y0, x0+width, y0+height)
         self.image = image # need reference
         display = 'Amount: %d' % (self.value)
-        canvas.create_text(x0, y0 + self.image.height() ,anchor = 'nw', 
+        canvas.create_text(x0, y0 + self.image.height() ,anchor = 'nw',
                             text = display)
         canvas.create_image(x0, y0, anchor = 'nw', image = self.image)
 
@@ -320,16 +320,16 @@ class playerResource(GameAttribute):
         self.image = image #need reference
         display = str(self.selling)
         textXOffset = 10
-        canvas.create_text(x0 + self.image.width() + textXOffset, 
+        canvas.create_text(x0 + self.image.width() + textXOffset,
                             y0 + height//2, anchor = 'w', text = display)
-        canvas.create_text(x0 + self.image.width() + textXOffset*2, 
+        canvas.create_text(x0 + self.image.width() + textXOffset*2,
             y0 + height//2, anchor = 'w', text = '$' + str(self.price))
 
         canvas.create_image(x0, y0, anchor = 'nw', image = self.image)
         buttonW, buttonH = width//4, height//2
         self.moreButton = MyButton(x0 + width-buttonW, y0, buttonW, buttonH,
         'MORE', 'green')
-        self.lessButton = MyButton(x0 + width-buttonW, y0 + buttonH, buttonW, 
+        self.lessButton = MyButton(x0 + width-buttonW, y0 + buttonH, buttonW,
                                     buttonH, 'LESS', 'red')
         self.moreButton.draw(self.game)
         self.lessButton.draw(self.game)
@@ -344,20 +344,20 @@ class World(Drawn):
 
     def __init__(self, player):
         self.game = player.game
-        # set up time 
+        # set up time
         minute = 60
-        self.secondCount = 0 
+        self.secondCount = 0
         self.todaySecCount = 0
         self.dayStage = 'day'
         self.dayTimeFrac = 0
         self.dayCount = 0
-        self.dayLength = 0.5* minute 
+        self.dayLength = 0.5* minute
         # set up the player
         self.player = player
         # make world and set environmental variables
         self.makeWorld()
         self.newDay()
-        self.setTreeDensity(4) 
+        self.setTreeDensity(4)
         self.raining = False
         self.rainIcon = self.game.rainIcon
         self.rainx0 = 0
@@ -366,13 +366,13 @@ class World(Drawn):
 
 
     def makeWorld(self):
-        self.trees = [Trees(self,self.game.width, 3) ,  
+        self.trees = [Trees(self,self.game.width, 3) ,
                         FruitTrees(self, 5*self.game.width//3, 3, 'apple')]
         self.buildings = []
-        self.house = House(self, 0, 2*self.game.width//3, 
+        self.house = House(self, 0, 2*self.game.width//3,
                             2*self.game.height//3, 'playerHouse')
 
-        self.shed = Shed(self, -5*self.game.width//6, 
+        self.shed = Shed(self, -5*self.game.width//6,
                             self.game.width//3, self.game.height//2, 'craft')
 
     def rollProbability(self):
@@ -392,7 +392,7 @@ class World(Drawn):
             duration = round(self.rainProbability * self.dayLength)
             self.rainStart = randint(0, self.dayLength - duration)
             self.rainEnd = self.rainStart + duration
-        else: 
+        else:
             self.rainStart = self.rainEnd = None
 
     def setDayLen(self, length):pass
@@ -414,11 +414,11 @@ class World(Drawn):
             def rollTreeX():
                 return xDir * randint(1, Trees.width*Trees.ageCap)
             xFactor = rollTreeX()
-            if xFactor * xOffset + pX in newTreeXs:  
+            if xFactor * xOffset + pX in newTreeXs:
                 xFactor = rollTreeX() # roll untill unique x is found
             treeX = xFactor * xOffset # placement in new scree
             selectTreeRoll = randint(1,10)
-            age = randint(1, Trees.ageCap-2) 
+            age = randint(1, Trees.ageCap-2)
             if selectTreeRoll <= 7: # Prob = 0.7
                 self.trees.append(Trees(self, pX + treeX, age))
             else: # Prob = 0.3
@@ -446,7 +446,7 @@ class World(Drawn):
         if self.raining:
             self.player.myWater.gain(1)
         return self.secondCount
-    
+
     def adjustWorldColor(self): # called in Simulator.py in openWorldTimerFired
         #Calculates product for rgb values of objects outside due to day/night
         self.dayTimeFrac = self.game.timerCount/(self.dayLength*
@@ -455,7 +455,7 @@ class World(Drawn):
         adjustTimeColor = self.dayTimeFrac * pi
         phaseShift = pi/6 # don't want to start day at darkest point.
         myDayNightFunction = lambda t, C: abs(sin(t + C)) # yay for trig
-        return myDayNightFunction(adjustTimeColor, phaseShift) 
+        return myDayNightFunction(adjustTimeColor, phaseShift)
 
     def moveRain(self):
         rainStep = 5
@@ -470,16 +470,16 @@ class World(Drawn):
         if d > 0:
             self.sunY0 -= step # move up screen
         else:
-            self.sunY0 += step # move down screen 
+            self.sunY0 += step # move down screen
 
     def drawBackground(self, game):
         skyBlue = self.rgbString(135, 206, 255, True)
         groundGreen = self.rgbString(0,201,87, True)
         # Draw Sky
-        game.canvas.create_rectangle(0,0,self.game.width, self.game.height, 
+        game.canvas.create_rectangle(0,0,self.game.width, self.game.height,
                                         fill = skyBlue)
         # Draw Ground
-        game.canvas.create_rectangle(0, game.groundY, self.game.width, 
+        game.canvas.create_rectangle(0, game.groundY, self.game.width,
                                         self.game.height, fill = groundGreen)
 
     def drawRain(self, game):
@@ -512,7 +512,7 @@ class World(Drawn):
 
 
 ##################
-#Outside Objects 
+#Outside Objects
 ##################
 
 class GameObjects(Drawn):
@@ -544,17 +544,17 @@ class Trees(GameObjects):
     def __init__(self, world, x0, age):
         __class__.counter += 1
         self.count = __class__.counter
-        self.age = age 
+        self.age = age
         self.size = self.age* randint(2,4) # roll
         self.woodProcuct = randint(1,5) # roll
-        super().__init__(world, x0, self.size * __class__.width, 
+        super().__init__(world, x0, self.size * __class__.width,
             self.size * __class__.height, 'tree%d' % self.count)
         self.resources = []
-        self.wood = GameAttribute(self, self.size*self.woodProcuct, 
+        self.wood = GameAttribute(self, self.size*self.woodProcuct,
                                 kind = 'wood', name= 'tree%dWood' % self.count)
         self.integrity = age
 
-    def grow(self): 
+    def grow(self):
         # increase wood, and leaves.
         if self.age < __class__.ageCap:
             oldSizeRoll = self.size/self.age # get old size roll
@@ -567,7 +567,7 @@ class Trees(GameObjects):
 
     def chopped(self):
         self.integrity -= 1
-    
+
     def draw(self, sx):
         game = self.game
         leafColor = self.rgbString(58, 95, 11, True)
@@ -577,29 +577,29 @@ class Trees(GameObjects):
         yOffset = self.height//3
         #draw Trunk
         trunkX0, trunkX1 = self.x0 + xOffset, self.x1 - xOffset
-        game.canvas.create_rectangle(trunkX0 - sx, self.y1 - yOffset, 
+        game.canvas.create_rectangle(trunkX0 - sx, self.y1 - yOffset,
                                     trunkX1 - sx, self.y1, fill = trunkColor)
         # draw greenery
         leavesCoords = [
-                (self.x0 - sx, self.y1 - yOffset), 
-                (trunkX0 - sx, self.y0 +yOffset), 
-                (self.x0 - sx, self.y0 +yOffset), 
-                (self.x0 - sx + self.width/2, self.y0), 
-                (self.x1 - sx, self.y0 + yOffset), 
-                (trunkX1 - sx, self.y0 + yOffset), 
+                (self.x0 - sx, self.y1 - yOffset),
+                (trunkX0 - sx, self.y0 +yOffset),
+                (self.x0 - sx, self.y0 +yOffset),
+                (self.x0 - sx + self.width/2, self.y0),
+                (self.x1 - sx, self.y0 + yOffset),
+                (trunkX1 - sx, self.y0 + yOffset),
                 (self.x1 - sx, self.y1 - yOffset)]
         game.canvas.create_polygon(leavesCoords, fill = leafColor)
 
 class FruitTrees(Trees):
     # map fruits to values
-    FRUITS= {'apple': 3, 'orange': 3, 'apricot': 2, 'cherry': 1,} 
+    FRUITS= {'apple': 3, 'orange': 3, 'apricot': 2, 'cherry': 1,}
     def __init__(self, world, x0, age, fruit):
         super().__init__(world, x0, age)
         self.fruit = fruit
         self.fruitImage = self.game.fruitImages[self.fruit]
         self.fruitNumber = min(self.size, 8) # max 8 fruits
         self.foodValue = __class__.FRUITS[self.fruit]
-        self.food = GameAttribute(self, self.fruitNumber * self.foodValue, 
+        self.food = GameAttribute(self, self.fruitNumber * self.foodValue,
              name= 'tree%dWood' % self.count,  kind = 'food')
 
     def picked(self):
@@ -616,12 +616,12 @@ class FruitTrees(Trees):
     def drawFruit(self, sx):
         xOffset = self.width//4
         yOffset = self.height//3
-        j = 0 
+        j = 0
         for i in range(self.fruitNumber):
             i %= 4 # columns of 4
             if i % 4 == 0:
-                j += 1 # when a col is full start new row 
-            self.game.canvas.create_image((self.x0 + i*xOffset) - sx, 
+                j += 1 # when a col is full start new row
+            self.game.canvas.create_image((self.x0 + i*xOffset) - sx,
                     self.y1 - j*yOffset, anchor = 's', image = self.fruitImage)
 
     def draw(self, sx):
@@ -634,7 +634,7 @@ class SolarCells(Drawn):
         __class__.counter += 1
         self.count = __class__.counter
         self.price = 100
-        self.iconPath = 'SolarCellIcon.gif'
+        self.iconPath = '../GifAssets/SolarCellIcon.gif'
         self.world = world
         timeOffset = Drawn.daylightOffset
         self.buying = 0
@@ -644,7 +644,7 @@ class SolarCells(Drawn):
 
     def buy(self, player, amount):
         if amount <= 0:
-            return 
+            return
         else:
             if player.myMoney.value >= self.price:
                 player.myMoney.lose(self.price)
@@ -657,7 +657,7 @@ class SolarCells(Drawn):
 
     def drawExt(self, game, x0, sx):
         self.x0 = x0
-        game.canvas.create_image(self.x0 - sx, game.groundY, 
+        game.canvas.create_image(self.x0 - sx, game.groundY,
                                     image = game.panelImage)
 
 
@@ -667,16 +667,16 @@ class SolarCells(Drawn):
         self.image = image #need reference
         display = str(self.buying)
         textXOffset = 10
-        canvas.create_text(x0 + self.image.width() + textXOffset, 
+        canvas.create_text(x0 + self.image.width() + textXOffset,
                             y0 + height//2, anchor = 'w', text = display)
-        canvas.create_text(x0 + self.image.width() + 2*textXOffset, 
-                            y0 + height//2, anchor = 'w', 
+        canvas.create_text(x0 + self.image.width() + 2*textXOffset,
+                            y0 + height//2, anchor = 'w',
                             text ='$'+ str(self.price))
         canvas.create_image(x0, y0, anchor = 'nw', image = self.image)
         buttonW, buttonH = width//4, height//2
         self.moreButton = MyButton(x0 + width-buttonW, y0, buttonW, buttonH,
         'MORE', 'green')
-        self.lessButton = MyButton(x0 + width-buttonW, y0 + buttonH, buttonW, 
+        self.lessButton = MyButton(x0 + width-buttonW, y0 + buttonH, buttonW,
                                     buttonH, 'LESS', 'red')
         self.moreButton.draw(self.world.game)
         self.lessButton.draw(self.world.game)
@@ -709,25 +709,25 @@ class Structure(GameObjects):
     def drawMain(self, game, x0, y0, x1, y1,):
         color = self.rgbString(139, 105, 20, True)
         game.canvas.create_rectangle(x0, y0, x1, y1, fill = color)
-        
+
 
     def drawRoof(self, game, x0, y0, x1, y1):
         color =  self.rgbString(107, 66, 38, True)
         xOffset = abs(x0 - x1)//8 # for trapezium shape
-        polygonCoords = [(x0-xOffset,y1), (x0+xOffset,y0), (x1-xOffset,y0), 
+        polygonCoords = [(x0-xOffset,y1), (x0+xOffset,y0), (x1-xOffset,y0),
                             (x1+xOffset,y1)]
         game.canvas.create_polygon(polygonCoords,fill = color)
 
-    def drawWindow(self, game, wWidth, wHeight):        
-        #for window in range(self.windows): Draw window 
+    def drawWindow(self, game, wWidth, wHeight):
+        #for window in range(self.windows): Draw window
             pass
 
     # When inside, Draw interior
-    def drawIn(self): 
+    def drawIn(self):
         ''' For House: workbench, bed, computer, fridge'''
         game = self.world.game
         wallColor = self.rgbString(139, 105, 20)
-        game.canvas.create_rectangle(0,0, game.width, game.height, 
+        game.canvas.create_rectangle(0,0, game.width, game.height,
                                        fill = wallColor)
 
 
@@ -755,14 +755,14 @@ class Shed(Structure):
 
     def drawTable(self, game):
         tableColor = self.rgbString(133, 87, 35)
-        game.canvas.create_rectangle(game.width//6,0, 5*game.width//6, 
+        game.canvas.create_rectangle(game.width//6,0, 5*game.width//6,
             game.height, fill= tableColor)
 
 class House(Structure):
     def __init__(self, world, x0, width, height, name): # windows
         super().__init__(world, x0, width, height, name)
-        self.computer = Computer(world, self.game.width//3, self.game.width//8, 
-                        self.game.height//15, 'computer', 'ComputerIcon.gif')
+        self.computer = Computer(world, self.game.width//3, self.game.width//8,
+                        self.game.height//15, 'computer', '../GifAssets/ComputerIcon.gif')
         self.objects = [self.computer]
         self.flowerPainting = self.game.artImages[0]
         self.peacePainting = self.game.artImages[1]
@@ -770,9 +770,9 @@ class House(Structure):
     def drawIn(self):
         super().drawIn()
         game = self.game
-        game.canvas.create_image(game.width//4, game.height//2, 
+        game.canvas.create_image(game.width//4, game.height//2,
                                     image = self.flowerPainting)
-        game.canvas.create_image(3*game.width//4, 2*game.height//3, 
+        game.canvas.create_image(3*game.width//4, 2*game.height//3,
                                     image = self.peacePainting)
 
 ####################
@@ -789,10 +789,10 @@ class Computer(GameObjects):
         self.icons = []
         iconOffset = self.game.height//8
         iconX0 = self.game.width//15
-        self.browserIcon = BrowserIcon(self, iconX0, iconOffset, 'browser', 
-                                    'BrowserIcon.gif')
+        self.browserIcon = BrowserIcon(self, iconX0, iconOffset, 'browser',
+                                    '../GifAssets/BrowserIcon.gif')
         self.inventoryIcon = CompIcon(self, iconX0, 3*iconOffset, 'inventory',
-            'Inventory.gif')
+            '../GifAssets/Inventory.gif')
         self.hasPower = True
 
     def turnOff(self):
@@ -807,10 +807,10 @@ class Computer(GameObjects):
 
     def drawBackground(self, game):
         if self.hasPower:
-            game.canvas.create_rectangle(0,0, game.width, game.height, 
+            game.canvas.create_rectangle(0,0, game.width, game.height,
                                         fill = self.screenColor)
         else: # draw black screen
-            game.canvas.create_rectangle(0,0, game.width, game.height, 
+            game.canvas.create_rectangle(0,0, game.width, game.height,
                                         fill = 'black')
 
 
@@ -828,16 +828,16 @@ class CompIcon(Drawn):
         self.game = computer.game
         self.world = computer.world
         self.margin = computer.game.width//8
-        self.windowCoords = (0 + self.margin, 0 + self.margin, 
+        self.windowCoords = (0 + self.margin, 0 + self.margin,
             self.game.width - self.margin, self.game.height - self.margin)
 
     def __repr__(self):
         return self.name
 
-    def iconClicked(self, x, y): 
+    def iconClicked(self, x, y):
             width = self.image.width()
             height = self.image.height()
-            if (x>=self.x0 and x<=self.x0 + width and y<=self.y0 + height and 
+            if (x>=self.x0 and x<=self.x0 + width and y<=self.y0 + height and
                         y >= self.y0):
                 return True
             return False
@@ -851,7 +851,7 @@ class CompIcon(Drawn):
 
     def drawExt(self, game, image): #draw icon in desktop screen
         self.image = image # need reference to redraw
-        game.canvas.create_image(self.x0, self.y0, anchor = 'nw', 
+        game.canvas.create_image(self.x0, self.y0, anchor = 'nw',
                                 image = self.image)
 
 class BrowserIcon(CompIcon):
@@ -872,19 +872,18 @@ class BrowserIcon(CompIcon):
 
     def buyButton(self, wX0, wY0, wX1, wY1, wWidth, wHeight):
         self.merchColor = self.rgbString( 153, 204, 255)
-        buy = MyButton(wX0 + wWidth//6, wY0, wWidth//6, 
-            wHeight//6, text = 'Buy', color = self.merchColor,  
+        buy = MyButton(wX0 + wWidth//6, wY0, wWidth//6,
+            wHeight//6, text = 'Buy', color = self.merchColor,
             font = 'Helvetica 24')
 
         self.buttons.append(buy)
 
     def sellButton(self, wX0, wY0, wX1, wY1, wWidth, wHeight):
-        sell = MyButton(wX0 + 3*wWidth//6, wY0, wWidth//6, 
-                        wHeight//6, text = 'Sell', color = self.merchColor, 
+        sell = MyButton(wX0 + 3*wWidth//6, wY0, wWidth//6,
+                        wHeight//6, text = 'Sell', color = self.merchColor,
                         font = 'Helvetica 24')
         self.buttons.append(sell)
 
 class Garden(Structure):
     def __init__(self, world, x0, width, height, name):
         pass
-
