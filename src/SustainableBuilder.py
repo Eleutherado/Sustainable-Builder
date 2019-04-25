@@ -18,7 +18,7 @@ class Drawn(object):
 
     @staticmethod  #from CMU 15-112
     def rgbString(red, green, blue, outside = False): #edited to suit game
-        offset = lambda x: __class__.daylightOffset * x if outside else x
+        offset = lambda x: int(__class__.daylightOffset * x) if outside else x
         return "#%02x%02x%02x" % (offset(red),offset(green), offset(blue))
 
 
